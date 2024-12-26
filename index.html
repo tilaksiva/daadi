@@ -5,131 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daadi Game</title>
     <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
-        }
-
-        .game-container {
-            max-width: 100%;
-            width: 400px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 300px;
-            width: 90%;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .button {
-            margin: 5px;
-            padding: 10px 20px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .button.secondary {
-            background: #666;
-        }
-
-        .board {
-            width: 100%;
-            aspect-ratio: 1;
-            background: white;
-            position: relative;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin: 20px 0;
-        }
-
-        .point {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid #333;
-            background: white;
-            position: absolute;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        /* Your existing styles here */
+        body { margin: 0; padding: 20px; font-family: Arial; background: #f0f0f0; }
+        .game-container { max-width: 100%; width: 400px; margin: 0 auto; }
+        .board { aspect-ratio: 1; background: white; position: relative; margin: 20px 0; border-radius: 8px; }
+        .point { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #333; position: absolute; 
+                transform: translate(-50%, -50%); cursor: pointer; }
         .point.player1 { background: #ff4444; }
         .point.player2 { background: #ffd700; }
-        .point.selected { box-shadow: 0 0 0 4px rgba(0,0,255,0.3); }
-        .point.removable { box-shadow: 0 0 0 4px rgba(255,0,0,0.3); }
-
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .stats-table th, 
-        .stats-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; max-width: 300px; }
+        .button { padding: 10px 20px; background: #4CAF50; color: white; border: none; 
+                 border-radius: 4px; cursor: pointer; margin: 5px; }
+        .button.secondary { background: #666; }
+        select { width: 100%; padding: 8px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div class="players-info">
+        <!-- Player Statistics -->
+        <div id="playersInfo">
             <h3>Player Statistics</h3>
-            <table class="stats-table">
-                <thead>
-                    <tr>
-                        <th>Player Name</th>
-                        <th>Wins</th>
-                    </tr>
-                </thead>
-                <tbody id="statsTableBody"></tbody>
-            </table>
+            <div id="statsTableBody"></div>
         </div>
 
+        <!-- Game Status -->
         <div id="status" style="text-align: center; margin: 10px 0;">
             Select players to start
         </div>
 
+        <!-- Game Board -->
         <div class="board">
-            <svg class="board-lines" viewBox="0 0 100 100">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
                 <rect x="10" y="10" width="80" height="80" fill="none" stroke="#333" stroke-width="2"/>
                 <rect x="25" y="25" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/>
                 <rect x="40" y="40" width="20" height="20" fill="none" stroke="#333" stroke-width="2"/>
@@ -141,7 +50,8 @@
             <div id="points"></div>
         </div>
 
-        <div style="display: flex; justify-content: center; gap: 10px;">
+        <!-- Game Controls -->
+        <div style="text-align: center;">
             <button class="button" onclick="showPlayerSelection()">Select Players</button>
             <button class="button" onclick="showAddPlayerModal()">Add New Player</button>
         </div>
@@ -151,11 +61,9 @@
     <div id="addPlayerModal" class="modal">
         <div class="modal-content">
             <h3>Add New Player</h3>
-            <input type="text" id="newPlayerName" placeholder="Enter player name">
-            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                <button class="button" onclick="saveNewPlayer()">Save</button>
-                <button class="button secondary" onclick="closeModal('addPlayerModal')">Cancel</button>
-            </div>
+            <input type="text" id="newPlayerName" placeholder="Enter player name" style="width: 100%; padding: 8px;">
+            <button class="button" onclick="saveNewPlayer()">Save</button>
+            <button class="button secondary" onclick="closeModal('addPlayerModal')">Cancel</button>
         </div>
     </div>
 
@@ -165,356 +73,234 @@
             <h3>Select Players</h3>
             <div>
                 <h4>Player 1 (Red)</h4>
-                <select id="player1Select" style="width: 100%; padding: 8px; margin-bottom: 15px;"></select>
+                <select id="player1Select"></select>
                 <h4>Player 2 (Yellow)</h4>
-                <select id="player2Select" style="width: 100%; padding: 8px; margin-bottom: 15px;"></select>
+                <select id="player2Select"></select>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                <button class="button" onclick="startGame()">Start Game</button>
-                <button class="button secondary" onclick="closeModal('selectPlayersModal')">Cancel</button>
-            </div>
+            <button class="button" onclick="beginGame()">Start Game</button>
+            <button class="button secondary" onclick="closeModal('selectPlayersModal')">Cancel</button>
         </div>
     </div>
-    // Add this script tag at the end of your HTML file
-<script>
-// Game state and constants
-let gameState = {
-    board: Array(24).fill(null),
-    currentPlayer: 1,
-    phase: 'placing',
-    piecesToPlace: 18,
-    selected: null,
-    needsRemoval: false,
-    player1PiecesOnBoard: 0,
-    player2PiecesOnBoard: 0,
-    player1Name: null,
-    player2Name: null
-};
 
-const POINTS = [
-    [10, 10], [50, 10], [90, 10],    // Top row
-    [25, 25], [50, 25], [75, 25],    // Second row
-    [40, 40], [50, 40], [60, 40],    // Third row
-    [10, 50], [25, 50], [40, 50],    // Left middle
-    [60, 50], [75, 50], [90, 50],    // Right middle
-    [40, 60], [50, 60], [60, 60],    // Third last row
-    [25, 75], [50, 75], [75, 75],    // Second last row
-    [10, 90], [50, 90], [90, 90]     // Bottom row
-];
+    <script>
+        // Game state
+        let gameState = {
+            board: Array(24).fill(null),
+            currentPlayer: 1,
+            phase: 'placing',
+            piecesToPlace: 18,
+            selected: null,
+            needsRemoval: false,
+            player1PiecesOnBoard: 0,
+            player2PiecesOnBoard: 0,
+            player1Name: null,
+            player2Name: null
+        };
 
-const MILLS = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Horizontal
-    [9, 10, 11], [12, 13, 14], [15, 16, 17],
-    [18, 19, 20], [21, 22, 23],
-    [0, 9, 21], [3, 10, 18], [6, 11, 15],  // Vertical
-    [1, 4, 7], [16, 19, 22],
-    [2, 5, 8], [14, 17, 20], [13, 20, 23]
-];
+        // Game constants
+        const POINTS = [
+            [10, 10], [50, 10], [90, 10],
+            [25, 25], [50, 25], [75, 25],
+            [40, 40], [50, 40], [60, 40],
+            [10, 50], [25, 50], [40, 50],
+            [60, 50], [75, 50], [90, 50],
+            [40, 60], [50, 60], [60, 60],
+            [25, 75], [50, 75], [75, 75],
+            [10, 90], [50, 90], [90, 90]
+        ];
 
-const VALID_MOVES = {
-    0: [1, 9], 1: [0, 2, 4], 2: [1, 14],
-    3: [4, 10], 4: [1, 3, 5, 7], 5: [4, 13],
-    6: [7, 11], 7: [4, 6, 8], 8: [7, 12],
-    9: [0, 10, 21], 10: [3, 9, 11, 18], 11: [6, 10, 15],
-    12: [8, 13, 17], 13: [5, 12, 14, 20], 14: [2, 13, 23],
-    15: [11, 16], 16: [15, 17, 19], 17: [12, 16],
-    18: [10, 19], 19: [16, 18, 20, 22], 20: [13, 19],
-    21: [9, 22], 22: [19, 21, 23], 23: [14, 22]
-};
+        // Initialize game
+        createBoard();
+        updatePlayerStats();
 
-// UI Control Functions
-function showAddPlayerModal() {
-    document.getElementById('addPlayerModal').classList.add('active');
-}
+        // UI Functions
+        function showAddPlayerModal() {
+            document.getElementById('addPlayerModal').classList.add('active');
+        }
 
-function showPlayerSelection() {
-    updatePlayerSelects();
-    document.getElementById('selectPlayersModal').classList.add('active');
-}
+        function showPlayerSelection() {
+            updatePlayerSelects();
+            document.getElementById('selectPlayersModal').classList.add('active');
+        }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
-}
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
 
-// Player Management Functions
-function getPlayers() {
-    try {
-        const players = localStorage.getItem('daadiPlayers');
-        return players ? JSON.parse(players) : {};
-    } catch (e) {
-        console.error('Error getting players:', e);
-        return {};
-    }
-}
+        // Player Management
+        function getPlayers() {
+            const players = localStorage.getItem('daadiPlayers');
+            return players ? JSON.parse(players) : {};
+        }
 
-function savePlayers(players) {
-    try {
-        localStorage.setItem('daadiPlayers', JSON.stringify(players));
-        return true;
-    } catch (e) {
-        console.error('Error saving players:', e);
-        return false;
-    }
-}
+        function savePlayers(players) {
+            localStorage.setItem('daadiPlayers', JSON.stringify(players));
+        }
 
-function saveNewPlayer() {
-    const nameInput = document.getElementById('newPlayerName');
-    const name = nameInput.value.trim();
-    
-    if (name) {
-        let players = getPlayers();
-        if (!players[name]) {
-            players[name] = 0;
-            if (savePlayers(players)) {
-                nameInput.value = '';
-                closeModal('addPlayerModal');
-                updatePlayerStats();
-                updatePlayerSelects();
-            } else {
-                alert('Error saving player. Please try again.');
+        function saveNewPlayer() {
+            const name = document.getElementById('newPlayerName').value.trim();
+            if (name) {
+                const players = getPlayers();
+                if (!players[name]) {
+                    players[name] = 0;
+                    savePlayers(players);
+                    document.getElementById('newPlayerName').value = '';
+                    closeModal('addPlayerModal');
+                    updatePlayerStats();
+                    updatePlayerSelects();
+                } else {
+                    alert('Player already exists!');
+                }
             }
-        } else {
-            alert('Player already exists!');
         }
-    } else {
-        alert('Please enter a name');
-    }
-}
 
-function updatePlayerSelects() {
-    const players = getPlayers();
-    const selects = ['player1Select', 'player2Select'];
-    
-    selects.forEach(selectId => {
-        const select = document.getElementById(selectId);
-        select.innerHTML = '<option value="">Select Player</option>';
-        Object.keys(players).forEach(player => {
-            select.innerHTML += `<option value="${player}">${player}</option>`;
-        });
-    });
-}
-
-function updatePlayerStats() {
-    const players = getPlayers();
-    const tbody = document.getElementById('statsTableBody');
-    tbody.innerHTML = '';
-    
-    Object.entries(players).forEach(([name, wins]) => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${name}</td>
-                <td>${wins}</td>
-            </tr>
-        `;
-    });
-}
-
-function recordWin(playerName) {
-    const players = getPlayers();
-    players[playerName] = (players[playerName] || 0) + 1;
-    savePlayers(players);
-    updatePlayerStats();
-}
-
-// Initialize function
-function init() {
-    updatePlayerStats();
-    createBoard();
-}
-
-// Call init when the page loads
-document.addEventListener('DOMContentLoaded', init);
-</script>
-// Add this script tag after the previous script
-<script>
-// Game Functions
-function startGame() {
-    const player1 = document.getElementById('player1Select').value;
-    const player2 = document.getElementById('player2Select').value;
-    
-    if (!player1 || !player2) {
-        alert('Please select both players');
-        return;
-    }
-    
-    if (player1 === player2) {
-        alert('Please select different players');
-        return;
-    }
-
-    gameState = {
-        board: Array(24).fill(null),
-        currentPlayer: 1,
-        phase: 'placing',
-        piecesToPlace: 18,
-        selected: null,
-        needsRemoval: false,
-        player1PiecesOnBoard: 0,
-        player2PiecesOnBoard: 0,
-        player1Name: player1,
-        player2Name: player2
-    };
-
-    closeModal('selectPlayersModal');
-    createBoard();
-    updateStatus();
-}
-
-function createBoard() {
-    const pointsContainer = document.getElementById('points');
-    pointsContainer.innerHTML = '';
-    
-    POINTS.forEach((pos, index) => {
-        const point = document.createElement('div');
-        point.className = 'point';
-        point.style.left = pos[0] + '%';
-        point.style.top = pos[1] + '%';
-        point.onclick = () => handleClick(index);
-        pointsContainer.appendChild(point);
-    });
-    
-    updateBoard();
-}
-
-function updateBoard() {
-    const points = document.getElementsByClassName('point');
-// Add this as another script tag
-<script>
-function updateBoard() {
-    const points = document.getElementsByClassName('point');
-    gameState.board.forEach((value, index) => {
-        points[index].className = 'point' + 
-            (value === 1 ? ' player1' : value === 2 ? ' player2' : '') +
-            (index === gameState.selected ? ' selected' : '') +
-            (gameState.needsRemoval && canRemovePiece(index) ? ' removable' : '');
-    });
-
-    updateStatus();
-}
-
-function updateStatus() {
-    const status = document.getElementById('status');
-    if (!gameState.player1Name || !gameState.player2Name) {
-        status.textContent = 'Select players to start';
-        return;
-    }
-    
-    const currentPlayerName = gameState.currentPlayer === 1 ? 
-        gameState.player1Name : gameState.player2Name;
-    
-    if (gameState.needsRemoval) {
-        status.textContent = `${currentPlayerName} - Remove opponent's piece`;
-    } else if (gameState.phase === 'placing') {
-        status.textContent = `${currentPlayerName}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
-    } else {
-        status.textContent = `${currentPlayerName}'s turn - Move a piece`;
-    }
-}
-
-function handleClick(index) {
-    if (!gameState.player1Name || !gameState.player2Name) return;
-    
-    if (gameState.needsRemoval) {
-        handleRemoval(index);
-    } else if (gameState.phase === 'placing') {
-        handlePlacing(index);
-    } else {
-        handleMoving(index);
-    }
-    updateBoard();
-}
-</script>
-// Add this as another script tag
-<script>
-function handlePlacing(index) {
-    if (gameState.board[index] !== null) return;
-
-    gameState.board[index] = gameState.currentPlayer;
-    gameState.piecesToPlace--;
-
-    if (gameState.currentPlayer === 1) {
-        gameState.player1PiecesOnBoard++;
-    } else {
-        gameState.player2PiecesOnBoard++;
-    }
-
-    if (checkMill(index)) {
-        gameState.needsRemoval = true;
-    } else {
-        gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
-    }
-
-    if (gameState.piecesToPlace === 0) {
-        gameState.phase = 'moving';
-    }
-}
-
-function handleMoving(index) {
-    if (gameState.selected === null) {
-        if (gameState.board[index] === gameState.currentPlayer) {
-            gameState.selected = index;
+        function updatePlayerSelects() {
+            const players = getPlayers();
+            ['player1Select', 'player2Select'].forEach(id => {
+                const select = document.getElementById(id);
+                select.innerHTML = '<option value="">Select Player</option>';
+                Object.keys(players).forEach(name => {
+                    select.innerHTML += `<option value="${name}">${name}</option>`;
+                });
+            });
         }
-    } else {
-        if (VALID_MOVES[gameState.selected].includes(index) && gameState.board[index] === null) {
-            gameState.board[index] = gameState.currentPlayer;
-            gameState.board[gameState.selected] = null;
+
+        function updatePlayerStats() {
+            const players = getPlayers();
+            const stats = document.getElementById('statsTableBody');
+            stats.innerHTML = Object.entries(players)
+                .map(([name, wins]) => `<div>${name}: ${wins} wins</div>`)
+                .join('');
+        }
+
+        // Game Functions
+        function beginGame() {
+            const player1 = document.getElementById('player1Select').value;
+            const player2 = document.getElementById('player2Select').value;
             
-            if (checkMill(index)) {
-                gameState.needsRemoval = true;
+            if (!player1 || !player2) {
+                alert('Please select both players');
+                return;
+            }
+            
+            if (player1 === player2) {
+                alert('Please select different players');
+                return;
+            }
+
+            // Reset game state
+            gameState = {
+                board: Array(24).fill(null),
+                currentPlayer: 1,
+                phase: 'placing',
+                piecesToPlace: 18,
+                selected: null,
+                needsRemoval: false,
+                player1PiecesOnBoard: 0,
+                player2PiecesOnBoard: 0,
+                player1Name: player1,
+                player2Name: player2
+            };
+
+            // Update UI
+            closeModal('selectPlayersModal');
+            createBoard();
+            updateStatus();
+            console.log('Game started:', gameState);
+        }
+
+        function createBoard() {
+            const pointsContainer = document.getElementById('points');
+            pointsContainer.innerHTML = '';
+            
+            POINTS.forEach((pos, index) => {
+                const point = document.createElement('div');
+                point.className = 'point';
+                point.style.left = pos[0] + '%';
+                point.style.top = pos[1] + '%';
+                point.onclick = () => handleClick(index);
+                pointsContainer.appendChild(point);
+            });
+            
+            updateBoard();
+        }
+
+        function handleClick(index) {
+            if (!gameState.player1Name || !gameState.player2Name) return;
+            
+            if (gameState.needsRemoval) {
+                handleRemoval(index);
+            } else if (gameState.phase === 'placing') {
+                handlePlacing(index);
             } else {
+                handleMoving(index);
+            }
+            updateBoard();
+        }
+
+        function updateBoard() {
+            const points = document.getElementsByClassName('point');
+            gameState.board.forEach((value, index) => {
+                points[index].className = 'point' + 
+                    (value === 1 ? ' player1' : value === 2 ? ' player2' : '');
+            });
+            updateStatus();
+        }
+
+        function updateStatus() {
+            const status = document.getElementById('status');
+            if (!gameState.player1Name || !gameState.player2Name) {
+                status.textContent = 'Select players to start';
+                return;
+            }
+            
+            const currentPlayerName = gameState.currentPlayer === 1 ? 
+                gameState.player1Name : gameState.player2Name;
+            
+            if (gameState.phase === 'placing') {
+                status.textContent = `${currentPlayerName}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
+            } else {
+                status.textContent = `${currentPlayerName}'s turn - Move a piece`;
+            }
+        }
+
+        function handlePlacing(index) {
+            if (gameState.board[index] !== null) return;
+
+            gameState.board[index] = gameState.currentPlayer;
+            gameState.piecesToPlace--;
+
+            if (gameState.currentPlayer === 1) {
+                gameState.player1PiecesOnBoard++;
+            } else {
+                gameState.player2PiecesOnBoard++;
+            }
+
+            gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+
+            if (gameState.piecesToPlace === 0) {
+                gameState.phase = 'moving';
+            }
+        }
+
+        function handleMoving(index) {
+            if (gameState.selected === null) {
+                if (gameState.board[index] === gameState.currentPlayer) {
+                    gameState.selected = index;
+                }
+            } else {
+                gameState.selected = null;
                 gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
             }
         }
-        gameState.selected = null;
-    }
-}
 
-function handleRemoval(index) {
-    if (canRemovePiece(index)) {
-        if (gameState.board[index] === 1) {
-            gameState.player1PiecesOnBoard--;
-        } else {
-            gameState.player2PiecesOnBoard--;
+        function handleRemoval(index) {
+            if (gameState.board[index] === (gameState.currentPlayer === 1 ? 2 : 1)) {
+                gameState.board[index] = null;
+                gameState.needsRemoval = false;
+                gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+            }
         }
-        
-        gameState.board[index] = null;
-        gameState.needsRemoval = false;
-        gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
-        
-        checkWinCondition();
-    }
-}
-</script>
-// Add this as the final script tag
-<script>
-function checkMill(index) {
-    return MILLS.some(mill => 
-        mill.includes(index) && 
-        mill.every(pos => gameState.board[pos] === gameState.currentPlayer)
-    );
-}
-
-function canRemovePiece(index) {
-    const piece = gameState.board[index];
-    if (!gameState.needsRemoval) return false;
-    if (piece !== (gameState.currentPlayer === 1 ? 2 : 1)) return false;
-    return !MILLS.some(mill => 
-        mill.includes(index) && 
-        mill.every(pos => gameState.board[pos] === piece)
-    );
-}
-
-function checkWinCondition() {
-    if (gameState.phase === 'moving') {
-        if (gameState.player1PiecesOnBoard < 3) {
-            recordWin(gameState.player2Name);
-            alert(`${gameState.player2Name} wins!`);
-            showPlayerSelection();
-        } else if (gameState.player2PiecesOnBoard < 3) {
-            recordWin(gameState.player1Name);
-            alert(`${gameState.player1Name} wins!`);
-            showPlayerSelection();
-        }
-    }
-}
-</script>
+    </script>
+</body>
+</html>
