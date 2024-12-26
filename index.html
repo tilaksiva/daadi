@@ -179,32 +179,23 @@
 
     <script>
         // Game initialization and event listeners
+        // Game event handlers
         document.addEventListener('DOMContentLoaded', function() {
-            // Debug log for initialization
-            console.log('Initializing game...');
+            console.log('Page loaded');
 
-            // Button event listeners
-            document.getElementById('addPlayerBtn').addEventListener('click', function() {
-                console.log('Opening add player modal');
-                document.getElementById('addPlayerModal').classList.add('active');
-            });
+            // Initialize game board and stats
+            createBoard();
+            updatePlayerStats();
 
-            document.getElementById('selectPlayersBtn').addEventListener('click', function() {
-                console.log('Opening player selection');
-                showPlayerSelection();
-            });
-
-            document.getElementById('savePlayerBtn').addEventListener('click', function() {
-                console.log('Saving new player');
-                saveNewPlayer();
-            });
-
-            document.getElementById('startGameBtn').addEventListener('click', function() {
-                console.log('Start game button clicked');
+            // Add event listeners
+            document.getElementById('startGameBtn').addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent any default form submission
+                console.log('Start button clicked');
+                
                 const player1 = document.getElementById('player1Select').value;
                 const player2 = document.getElementById('player2Select').value;
                 
-                console.log('Selected players:', player1, player2);
+                console.log('Selected players:', { player1, player2 });
                 
                 if (!player1 || !player2) {
                     alert('Please select both players');
@@ -216,7 +207,7 @@
                     return;
                 }
 
-                // Reset game state with new players
+                // Update game state
                 gameState = {
                     board: Array(24).fill(null),
                     currentPlayer: 1,
@@ -230,17 +221,150 @@
                     player2Name: player2
                 };
 
-                console.log('New game state:', gameState);
-                closeModal('selectPlayersModal');
+                console.log('Game state initialized:', gameState);
+
+                // Update UI
+                document.getElementById('status').textContent = 
+                    `${player1}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
+                
+                // Re-create board with new state
                 createBoard();
-                updateStatus();
-                document.getElementById('status').textContent = `${player1}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
+                
+                // Close modal
+                closeModal('selectPlayersModal');
+                
+                console.log('Game started successfully');
             });
 
-            // Initialize game
-            console.log('Initial setup');
-            updatePlayerStats();
-            createBoard();
+            // Add player button
+            document.getElementById('addPlayerBtn').addEventListener('click', function() {
+                console.log('Add player clicked');
+                document.getElementById('addPlayerModal').classList.add('active');
+            });
+
+            // Select players button
+            document.getElementById('selectPlayersBtn').addEventListener('click', function() {
+                console.log('Select players clicked');
+                updatePlayerSelects();
+                document.getElementById('selectPlayersModal').classList.add('active');
+            });
+
+            // Save new player button
+            document.getElementById('savePlayerBtn').addEventListener('click', function() {
+                console.log('Save player clicked');
+                saveNewPlayer();
+            });
+        });
+
+        function createBoard() {
+            console.log('Creating board');
+            const pointsContainer = document.getElementById('points');
+            pointsContainer.innerHTML = '';
+            
+            POINTS.forEach((pos, index) => {
+                const point = document.createElement('div');
+                point.className = 'point';
+                point.style.left = pos[0] + '%';
+                point.style.top = pos[1] + '%';
+                point.onclick = () => handleClick(index);
+                pointsContainer.appendChild(point);
+            });
+            
+            updateBoard();
+            console.log('Board created');
+        }
+
+        function handleClick(index) {
+            console.log('Click on point:', index);
+            console.log('Current game state:', gameState);
+
+            if (!gameState.player1Name || !gameState.player2Name) {
+                alert('Please select players first');
+                showPlayerSelection();
+                return;
+            }
+
+            if (gameState.needsRemoval) {
+                handleRemoval(index);
+            } else if (gameState.phase === 'placing') {
+                handlePlacing(index);
+            } else {
+                handleMoving(index);
+            }
+
+            updateBoard();
+            console.log('After move game state:', gameState);
+        }
+
+        function handlePlacing(index) {
+            console.log('Placing piece at:', index);
+            
+            if (gameState.board[index] !== null) {
+                console.log('Position already occupied');
+                return;
+            }
+
+            gameState.board[index] = gameState.currentPlayer;
+            gameState.piecesToPlace--;
+
+            if (gameState.currentPlayer === 1) {
+                gameState.player1PiecesOnBoard++;
+            } else {
+                gameState.player2PiecesOnBoard++;
+            }
+
+            if (checkMill(index)) {
+                console.log('Mill formed!');
+                gameState.needsRemoval = true;
+            } else {
+                gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+            }
+
+            if (gameState.piecesToPlace === 0) {
+                console.log('All pieces placed, moving to moving phase');
+                gameState.phase = 'moving';
+            }
+
+            console.log('Updated game state:', gameState);
+        }
+
+        function updateBoard() {
+            console.log('Updating board');
+            const points = document.getElementsByClassName('point');
+            
+            gameState.board.forEach((value, index) => {
+                points[index].className = 'point' + 
+                    (value === 1 ? ' player1' : value === 2 ? ' player2' : '') +
+                    (index === gameState.selected ? ' selected' : '') +
+                    (gameState.needsRemoval && canRemovePiece(index) ? ' removable' : '');
+            });
+
+            updateStatus();
+        }
+
+        function updateStatus() {
+            const status = document.getElementById('status');
+            const statusText = getGameStatusText();
+            status.textContent = statusText;
+            console.log('Status updated:', statusText);
+        }
+
+        function getGameStatusText() {
+            if (!gameState.player1Name || !gameState.player2Name) {
+                return 'Select players to start';
+            }
+            
+            const currentPlayerName = gameState.currentPlayer === 1 ? 
+                gameState.player1Name : gameState.player2Name;
+            
+            if (gameState.needsRemoval) {
+                return `${currentPlayerName} - Remove opponent's piece`;
+            } else if (gameState.phase === 'placing') {
+                return `${currentPlayerName}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
+            } else {
+                return `${currentPlayerName}'s turn - Move a piece`;
+            }
+        }
         });
 
         // Game state
