@@ -178,18 +178,67 @@
     </div>
 
     <script>
-        // Wait for DOM to be fully loaded
+        // Game initialization and event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Add event listeners for buttons
+            // Debug log for initialization
+            console.log('Initializing game...');
+
+            // Button event listeners
             document.getElementById('addPlayerBtn').addEventListener('click', function() {
+                console.log('Opening add player modal');
                 document.getElementById('addPlayerModal').classList.add('active');
             });
 
-            document.getElementById('selectPlayersBtn').addEventListener('click', showPlayerSelection);
-            document.getElementById('savePlayerBtn').addEventListener('click', saveNewPlayer);
-            document.getElementById('startGameBtn').addEventListener('click', startGame);
+            document.getElementById('selectPlayersBtn').addEventListener('click', function() {
+                console.log('Opening player selection');
+                showPlayerSelection();
+            });
+
+            document.getElementById('savePlayerBtn').addEventListener('click', function() {
+                console.log('Saving new player');
+                saveNewPlayer();
+            });
+
+            document.getElementById('startGameBtn').addEventListener('click', function() {
+                console.log('Start game button clicked');
+                const player1 = document.getElementById('player1Select').value;
+                const player2 = document.getElementById('player2Select').value;
+                
+                console.log('Selected players:', player1, player2);
+                
+                if (!player1 || !player2) {
+                    alert('Please select both players');
+                    return;
+                }
+                
+                if (player1 === player2) {
+                    alert('Please select different players');
+                    return;
+                }
+
+                // Reset game state with new players
+                gameState = {
+                    board: Array(24).fill(null),
+                    currentPlayer: 1,
+                    phase: 'placing',
+                    piecesToPlace: 18,
+                    selected: null,
+                    needsRemoval: false,
+                    player1PiecesOnBoard: 0,
+                    player2PiecesOnBoard: 0,
+                    player1Name: player1,
+                    player2Name: player2
+                };
+
+                console.log('New game state:', gameState);
+                closeModal('selectPlayersModal');
+                createBoard();
+                updateStatus();
+                document.getElementById('status').textContent = `${player1}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
+            });
 
             // Initialize game
+            console.log('Initial setup');
             updatePlayerStats();
             createBoard();
         });
