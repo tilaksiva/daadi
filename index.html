@@ -171,7 +171,7 @@
                 <select id="player2Select" style="width: 100%; padding: 8px; margin-bottom: 15px;"></select>
             </div>
             <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                <button class="button" id="startGameBtn">Start Game</button>
+                <button class="button" onclick="startGame()">Start Game</button>
                 <button class="button secondary" onclick="closeModal('selectPlayersModal')">Cancel</button>
             </div>
         </div>
@@ -180,6 +180,53 @@
     <script>
         // Game initialization and event listeners
         // Game event handlers
+        // Global function for starting game
+        function startGame() {
+            console.log('Start game function called');
+            const player1 = document.getElementById('player1Select').value;
+            const player2 = document.getElementById('player2Select').value;
+            
+            console.log('Selected players:', { player1, player2 });
+            
+            if (!player1 || !player2) {
+                alert('Please select both players');
+                return;
+            }
+            
+            if (player1 === player2) {
+                alert('Please select different players');
+                return;
+            }
+
+            // Update game state
+            gameState = {
+                board: Array(24).fill(null),
+                currentPlayer: 1,
+                phase: 'placing',
+                piecesToPlace: 18,
+                selected: null,
+                needsRemoval: false,
+                player1PiecesOnBoard: 0,
+                player2PiecesOnBoard: 0,
+                player1Name: player1,
+                player2Name: player2
+            };
+
+            console.log('Game state initialized:', gameState);
+
+            // Update UI
+            document.getElementById('status').textContent = 
+                `${player1}'s turn - Place a piece (${gameState.piecesToPlace} remaining)`;
+            
+            // Re-create board with new state
+            createBoard();
+            
+            // Close modal
+            closeModal('selectPlayersModal');
+            
+            console.log('Game started successfully');
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Page loaded');
 
