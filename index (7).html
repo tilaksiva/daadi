@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="te"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>దాడి – Daadi</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{--teak:#3a2210;--ink:#2a1708;--wood:#e9c58a;--r:#d9342b;--y:#f4b92a;--cream:#fff1d6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;justify-content:center;padding:10px;color:var(--cream);font-family:"Noto Sans Telugu",system-ui,sans-serif;background:radial-gradient(circle at 25% 10%,#6b4220,#1e1107 70%)}
+.app{width:100%;max-width:520px}
+h1{margin:2px 0 8px;text-align:center;font-size:2rem;font-weight:800}
+h1 small,.sm,button small,#msg small{display:block;font-size:.72rem;font-weight:400;opacity:.75}
+.bar{display:flex;gap:8px}
+.pl{flex:1;padding:7px 10px;border-radius:12px;background:#0005;border:2px solid transparent;transition:.25s}
+.pl.act{border-color:var(--cream);box-shadow:0 0 16px #ffd88a99;transform:translateY(-2px)}
+.pl .n{font-weight:700;display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:50%;display:inline-block}
+.c0{background:var(--r)}.c1{background:var(--y)}
+.dots{min-height:12px;margin-top:3px}.dots i{display:inline-block;width:8px;height:8px;border-radius:50%;margin:1px}
+#msg{text-align:center;margin:8px 0;padding:7px;border-radius:10px;background:#0006;min-height:3.4em}
+#msg b{display:block;font-size:1.05rem}
+.bw{background:linear-gradient(135deg,#f0cf98,#d9a964);border-radius:18px;padding:8px;box-shadow:0 10px 28px #000b,inset 0 0 0 3px #8a5a2b}
+svg{width:100%;height:auto;display:block;touch-action:manipulation;user-select:none}
+.ln{stroke:#5b3513;stroke-width:1.1;fill:none;stroke-linecap:round}
+.pt{fill:#5b3513}
+.pc{stroke:#2a1708;stroke-width:.8;transition:.2s}
+.pc.k0{fill:url(#g0)}.pc.k1{fill:url(#g1)}
+.pc.pop{animation:pop .4s}
+.pc.sel{stroke:#fff;stroke-width:1.6}
+.pc.ml{filter:drop-shadow(0 0 1.6px #fff)}
+.tg{fill:#3fd16a55;stroke:#1a8d3d;stroke-width:.9;animation:pl 1s infinite}
+.rm{fill:none;stroke:#e00;stroke-width:1.3;animation:pl .6s infinite}
+.hn{fill:none;stroke:#2a6bff;stroke-width:1.3;stroke-dasharray:2 1.5;animation:pl .8s infinite}
+.sh{fill:none;stroke:#fff;stroke-width:.9;stroke-dasharray:1.4 1}
+.fz{fill:#9fe3ff99;stroke:#3aa7d6;stroke-width:.8}
+.ht{fill:transparent;cursor:pointer}
+@keyframes pop{0%{transform:scale(0);transform-box:fill-box;transform-origin:center}70%{transform:scale(1.3);transform-box:fill-box;transform-origin:center}100%{transform:scale(1);transform-box:fill-box;transform-origin:center}}
+@keyframes pl{50%{opacity:.35}}
+.row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:8px 10px;background:#7a4a1f;color:var(--cream);flex:1;font-weight:700}
+button:hover{background:#97602b}
+button.go{background:#2e8b3d;font-size:1.05rem;padding:12px;width:100%;margin-top:10px}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:12px;z-index:5;overflow:auto}
+.modal.on{display:flex}
+.card{background:#3a2210;border:2px solid #c48a45;border-radius:16px;padding:16px;width:100%;max-width:400px;max-height:96vh;overflow:auto}
+.card h2{margin:0 0 8px;text-align:center}
+.seg{display:flex;gap:6px;margin:6px 0;flex-wrap:wrap}.seg button{min-width:96px}
+.seg button{background:#5a3818;border:2px solid transparent}
+.seg button.on{border-color:var(--y);background:#7a4a1f}
+input[type=text],select{width:100%;padding:8px;border-radius:8px;border:0;margin:3px 0;font:inherit}
+label{display:block;margin:6px 0}
+.hide{display:none!important}
+#toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.6);background:#000d;border:2px solid var(--y);padding:14px 22px;border-radius:18px;text-align:center;opacity:0;pointer-events:none;z-index:9;transition:.35s}
+#toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#toast span{font-size:2.6rem;display:block}
+.cf{position:fixed;left:50%;top:45%;width:10px;height:10px;border-radius:2px;z-index:8;pointer-events:none;animation:cf 1.3s ease-out forwards}
+@keyframes cf{to{transform:translate(var(--x),var(--y)) rotate(720deg);opacity:0}}
+.lb td{padding:2px 8px}
+.rules p{margin:6px 0;font-size:.9rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body>
+<div class="app">
+<h1>దాడి<small>Daadi · Nine Men's Morris</small></h1>
+<div class="bar"><div class="pl" id="p0"></div><div class="pl" id="p1"></div></div>
+<div id="msg"></div>
+<div class="bw"><svg viewBox="0 0 100 100" id="bd">
+<defs>
+<radialGradient id="g0" cx=".35" cy=".3"><stop offset="0" stop-color="#ff8a7a"/><stop offset="1" stop-color="#b3150f"/></radialGradient>
+<radialGradient id="g1" cx=".35" cy=".3"><stop offset="0" stop-color="#fff0a0"/><stop offset="1" stop-color="#d48a00"/></radialGradient>
+</defs>
+<g class="ln"><rect x="6" y="6" width="88" height="88"/><rect x="26" y="26" width="48" height="48"/><rect x="40" y="40" width="20" height="20"/>
+<path d="M50 6V40M50 60V94M6 50H40M60 50H94"/></g>
+<g id="lay"></g></svg></div>
+<div class="row">
+<button id="bHint">💡 సూచన<small>Hint</small></button>
+<button id="bNew">🔄 కొత్త ఆట<small>New game</small></button>
+<button id="bRules">📖 నియమాలు<small>Rules</small></button>
+<button id="bSnd">🔊<small>Sound</small></button>
+</div></div>
+
+<div class="modal on" id="setup"><div class="card">
+<h2>దాడి <small class="sm">Daadi</small></h2>
+<div class="seg" id="modeSeg">
+<button data-m="0" class="on">👥 ఇద్దరు ఆటగాళ్లు<small>2 Players</small></button>
+<button data-m="1">🤖 కంప్యూటర్‌తో<small>vs Computer</small></button>
+<button data-m="2">🌐 ఆన్‌లైన్<small>2 phones</small></button></div>
+<div class="seg hide" id="lvlSeg">
+<button data-l="0">సులభం<small>Easy</small></button>
+<button data-l="1">మధ్యస్థం<small>Medium</small></button>
+<button data-l="2" class="on">కఠినం<small>Hard</small></button></div>
+<input type="text" id="n1" value="ఆటగాడు 1" maxlength="14">
+<input type="text" id="n2" value="ఆటగాడు 2" maxlength="14">
+<label>ఎవరు మొదలు పెడతారు? <span class="sm">Who starts?</span>
+<select id="first"><option value="0">🔴 1</option><option value="1">🟡 2</option></select></label>
+<label><input type="checkbox" id="fly" checked> 🕊️ 3 కాయలుంటే ఎగరవచ్చు <span class="sm">Flying with 3 pieces left</span></label>
+<label><input type="checkbox" id="surp" checked> ✨ ఆశ్చర్యాలు! <span class="sm">Surprise events (bonus turn, shield, freeze, swap)</span></label>
+<div id="onl" class="hide">
+<button class="go" id="bCreate" style="background:#2e8b3d">🏠 గది సృష్టించు<small>Create room (you play red)</small></button>
+<input type="text" id="code" placeholder="కోడ్ / Room code" maxlength="4" style="text-transform:uppercase;text-align:center;font-size:1.4rem;letter-spacing:.3em">
+<button class="go" id="bJoin" style="background:#2a6bff">🚪 గదిలో చేరండి<small>Join friend's room</small></button></div>
+<button class="go" id="go">ఆట ప్రారంభించు ▶<small>Start game</small></button>
+<table class="lb" id="lb"></table>
+</div></div>
+
+<div class="modal" id="rules"><div class="card rules"><h2>📖 నియమాలు <small class="sm">Rules</small></h2>
+<p>1️⃣ ఒక్కొక్కరికి 9 కాయలు. వంతులవారీగా ఖాళీ చుక్కపై ఉంచండి.<br><span class="sm">Each player has 9 pieces. Place them one by one on empty points.</span></p>
+<p>2️⃣ ఒకే గీతపై 3 కాయలు వస్తే <b>దాడి!</b> ప్రత్యర్థి కాయను తీసివేయండి (దాడిలో లేనిది).<br><span class="sm">3 in a line = Daadi (mill). Remove an opponent piece, preferably not one in a mill.</span></p>
+<p>3️⃣ అన్నీ ఉంచాక, గీత వెంబడి పక్క చుక్కకు కదపండి.<br><span class="sm">After placing, slide a piece along a line to a neighbouring empty point.</span></p>
+<p>4️⃣ 3 కాయలు మిగిలితే ఎక్కడికైనా ఎగరవచ్చు (ఎంపిక).<br><span class="sm">With 3 pieces you may fly anywhere (optional rule).</span></p>
+<p>5️⃣ 2 కాయలే మిగిలినా, కదలలేకపోయినా ఓడిపోతారు.<br><span class="sm">You lose with only 2 pieces or if you cannot move.</span></p>
+<p>✨ <b>ఆశ్చర్యాలు:</b> 🎁 అదనపు వంతు · 🛡️ కవచం (కాయ తీయలేరు) · ❄️ ఘనీభవనం (కదలదు) · 🔀 మార్పిడి (రెండు కాయలు రంగు మారతాయి)<br><span class="sm">Surprises: bonus turn · shield (can't be removed) · freeze (can't move) · swap (two opposite pieces trade colours)</span></p>
+<button class="go" onclick="rules.classList.remove('on')">సరే<small>Close</small></button></div></div>
+
+<div class="modal" id="wait"><div class="card" style="text-align:center"><h2 id="wT"></h2>
+<div id="wCode" style="font-size:2.8rem;letter-spacing:.3em;font-weight:800;color:var(--y)"></div><p id="wS" class="sm"></p>
+<button class="hide" id="wShare">📤 ఆహ్వాన లింక్ పంపండి<small>Share invite link</small></button>
+<button id="wCancel" style="background:#7a4a1f;margin-top:8px">రద్దు<small>Cancel</small></button></div></div>
+<div class="modal" id="end"><div class="card" style="text-align:center"><h2 id="endT"></h2>
+<button class="go" id="again">మళ్లీ ఆడండి<small>Play again</small></button>
+<button class="go" id="menu" style="background:#7a4a1f">మెనూ<small>Menu</small></button></div></div>
+<div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),H=(te,en)=>`<b>${te}</b><small>${en}</small>`;
+const net={role:null,peer:null,conn:null,q:[],me:0,code:''};
+const Q=(...a)=>{if(net.role==='host')net.q.push(a)};
+/* ---------- board ---------- */
+const L=[6,26,40],PTS=[];
+for(let r=0;r<3;r++){const a=L[r],z=100-a;PTS.push([a,a],[50,a],[z,a],[z,50],[z,z],[50,z],[a,z],[a,50])}
+const ADJ=PTS.map(()=>[]),ln=(a,b)=>{ADJ[a].push(b);ADJ[b].push(a)};
+for(let r=0;r<3;r++)for(let i=0;i<8;i++)ln(r*8+i,r*8+(i+1)%8);
+for(let r=0;r<2;r++)for(let i=1;i<8;i+=2)ln(r*8+i,(r+1)*8+i);
+const MILLS=[];
+for(let r=0;r<3;r++)for(let s=0;s<4;s++){const o=r*8,i=s*2;MILLS.push([o+i,o+i+1,o+(i+2)%8])}
+for(let i=1;i<8;i+=2)MILLS.push([i,8+i,16+i]);
+const MOF=PTS.map((_,i)=>MILLS.filter(m=>m.includes(i)));
+/* ---------- rules engine ---------- */
+const inMill=(b,i)=>b[i]!=null&&MOF[i].some(m=>m.every(j=>b[j]===b[i]));
+const total=(s,p)=>s.b.filter(x=>x===p).length+s.tp[p];
+function removables(b,v,shield){
+  const c=[];b.forEach((x,i)=>{if(x===v&&!(shield&&shield[i]))c.push(i)});
+  const f=c.filter(i=>!inMill(b,i));return f.length?f:c}
+function gen(s,p,o={}){
+  const out=[],placing=s.tp[p]>0,fly=o.fly&&!placing&&s.b.filter(x=>x===p).length===3;
+  const add=(f,t)=>{const b=s.b.slice();if(f!=null)b[f]=null;b[t]=p;
+    if(inMill(b,t)){const rs=removables(b,1-p,o.shield);if(rs.length){rs.forEach(r=>out.push({f,t,r}));return}}
+    out.push({f,t})};
+  if(placing)s.b.forEach((v,i)=>{if(v==null)add(null,i)});
+  else s.b.forEach((v,f)=>{if(v!==p||(o.frozen&&o.frozen[f]))return;
+    (fly?s.b.map((_,i)=>i):ADJ[f]).forEach(t=>{if(s.b[t]==null)add(f,t)})});
+  return out}
+function apply(s,p,m){const b=s.b.slice(),tp=s.tp.slice();
+  if(m.f==null)tp[p]--;else b[m.f]=null;b[m.t]=p;if(m.r!=null)b[m.r]=null;return{b,tp}}
+/* ---------- computer ---------- */
+const mob=(s,p)=>{let n=0;s.b.forEach((v,i)=>{if(v===p)ADJ[i].forEach(j=>{if(s.b[j]==null)n++})});return n};
+function ev(s,p){const q=1-p;let v=(total(s,p)-total(s,q))*12;
+  for(const m of MILLS){const a=m.map(i=>s.b[i]),cp=a.filter(x=>x===p).length,cq=a.filter(x=>x===q).length,ce=a.filter(x=>x==null).length;
+    if(cp===3)v+=6;if(cq===3)v-=6;if(cp===2&&ce===1)v+=5;if(cq===2&&ce===1)v-=5}
+  if(!s.tp[0]&&!s.tp[1])v+=(mob(s,p)-mob(s,q))*1.5;return v}
+function nega(s,p,d,al,be,o){
+  if(total(s,p)<3)return -1000-d;
+  const ms=gen(s,p,o);if(!ms.length)return -1000-d;
+  if(d===0)return ev(s,p);
+  ms.sort((x,y)=>(y.r!=null)-(x.r!=null));let best=-1e9;
+  for(const m of ms){const v=-nega(apply(s,p,m),1-p,d-1,-be,-al,o);
+    if(v>best)best=v;if(best>al)al=best;if(al>=be)break}
+  return best}
+function pick(s,p,lvl,o){
+  const ms=gen(s,p,o);if(!ms.length)return null;
+  if(lvl===0){const mm=ms.filter(m=>m.r!=null),pool=mm.length&&Math.random()<.4?mm:ms;return pool[Math.random()*pool.length|0]}
+  const d=lvl===1?1:(s.tp[p]>0?3:4);let best=-1e9,bm=[];
+  for(const m of ms){const v=-nega(apply(s,p,m),1-p,d-1,-1e9,1e9,{fly:o.fly});
+    if(v>best+.01){best=v;bm=[m]}else if(Math.abs(v-best)<=.01)bm.push(m)}
+  return bm[Math.random()*bm.length|0]}
+/* ---------- sound & fx ---------- */
+let AC,mute=false;
+function tone(f,t,d,ty='sine',v=.12){if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain(),s=AC.currentTime+t;o.type=ty;o.frequency.value=f;o.connect(g);g.connect(AC.destination);
+  g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.start(s);o.stop(s+d)}catch(e){}}
+const sfx=k=>(Q('sfx',k),{put:()=>tone(300,0,.12,'triangle'),mill:()=>[523,659,784,1047].forEach((f,i)=>tone(f,i*.09,.25,'square',.07)),
+  ev:()=>[300,500,800,1200,1600].forEach((f,i)=>tone(f,i*.07,.2,'sawtooth',.06)),win:()=>[523,659,784,659,784,1047].forEach((f,i)=>tone(f,i*.15,.3,'triangle',.12))})[k]();
+function fx(n=36){Q('fx',n);const cols=['#ff4d3d','#ffd23f','#3fd16a','#4da3ff','#fff'];
+  for(let i=0;i<n;i++){const e=document.createElement('i');e.className='cf';const a=Math.random()*6.28,r=80+Math.random()*190;
+    e.style.cssText=`--x:${Math.cos(a)*r}px;--y:${Math.sin(a)*r+60}px;background:${cols[i%5]}`;document.body.appendChild(e);setTimeout(()=>e.remove(),1400)}}
+let tt;function toast(ic,te,en){Q('toast',ic,te,en);const t=$('#toast');t.innerHTML=`<span>${ic}</span>${H(te,en)}`;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1700)}
+/* ---------- game ---------- */
+let G=null,CFG={ai:0,lvl:2};
+const isAI=p=>G.cfg.ai&&p===1,nm=p=>G.names[p],opts=()=>({fly:G.cfg.fly,shield:G.shield,frozen:G.frozen});
+function newGame(cfg){G={cfg,names:[cfg.n1,cfg.n2],b:Array(24).fill(null),tp:[9,9],turn:cfg.first,mode:'place',sel:null,tgt:[],rem:[],
+  shield:{},frozen:{},ply:0,lastEv:0,quiet:0,last:null,over:false,wait:false,pb:null,pend:null,hint:null};
+  ['setup','end','wait'].forEach(i=>$('#'+i).classList.remove('on'));$('#again').classList.remove('hide');wake();begin()}
+function tick(){for(const k of['shield','frozen'])for(const i in G[k])if(--G[k][i]<=0)delete G[k][i]}
+function begin(){
+  if(G.over)return;G.wait=false;const p=G.turn;
+  if(total(G,p)<3)return win(1-p);
+  if(G.quiet>=60&&!G.tp[0]&&!G.tp[1])return win(null);
+  const ms=gen(G,p,opts());
+  if(!ms.length){
+    if(!G.tp[p]&&!gen(G,p,{fly:G.cfg.fly}).length)return win(1-p);
+    toast('❄️','వంతు వదిలారు','Turn skipped: all movable pieces are frozen');G.turn=1-p;tick();return setTimeout(begin,1200)}
+  G.mode=G.tp[p]>0?'place':'move';G.sel=null;G.tgt=[];render();
+  if(isAI(p)){G.wait=true;setTimeout(aiMove,800)}}
+function aiMove(){
+  if(G.over)return;const p=G.turn,m=pick(G,p,G.cfg.lvl,opts());if(!m)return;
+  if(m.r!=null){const b=G.b.slice();if(m.f!=null)b[m.f]=null;b[m.t]=p;G.pb=b;G.last=m.t;render();sfx('mill');fx(20);setTimeout(()=>commit(m),900)}
+  else commit(m)}
+function commit(m){
+  const p=G.turn,ns=apply(G,p,m);G.b=ns.b;G.tp=ns.tp;
+  if(m.f!=null&&G.shield[m.f]){G.shield[m.t]=G.shield[m.f];delete G.shield[m.f]}
+  if(m.r!=null){delete G.shield[m.r];delete G.frozen[m.r];G.quiet=0;sfx('mill')}else{G.quiet++;sfx('put')}
+  G.last=m.t;G.pb=null;G.pend=null;G.hint=null;G.ply++;
+  let keep=false;
+  if(G.cfg.surp&&G.ply>=4&&G.ply-G.lastEv>=4&&Math.random()<.2){G.lastEv=G.ply;keep=event(p)}
+  if(!keep){G.turn=1-p;tick()}
+  G.wait=true;render();setTimeout(begin,G.lastEv===G.ply?1800:200)}
+function event(p){
+  const q=1-p,idx=v=>G.b.map((x,i)=>x===v?i:-1).filter(i=>i>=0),R=a=>a[Math.random()*a.length|0];
+  const pool=['bonus','shield','swap'];if(!G.tp[0]&&!G.tp[1])pool.push('freeze','freeze');
+  const e=R(pool),mine=idx(p),their=idx(q);sfx('ev');
+  if(e==='bonus'){toast('🎁','అదృష్టం! '+nm(p)+'కు అదనపు వంతు','Bonus turn for '+nm(p));return true}
+  if(e==='shield'&&mine.length){G.shield[R(mine)]=6;toast('🛡️','కవచం!','A shield protects one of '+nm(p)+"'s pieces")}
+  else if(e==='freeze'&&their.length){const i=R(their);G.frozen[i]=5;toast('❄️','ఘనీభవనం!',nm(q)+"'s piece is frozen for a few turns")}
+  else if(e==='swap'&&mine.length&&their.length){const a=R(mine),c=R(their);G.b[a]=q;G.b[c]=p;
+    for(const i of[a,c]){delete G.shield[i];delete G.frozen[i]}toast('🔀','మార్పిడి!','Two pieces swapped colours!')}
+  return false}
+function humanAct(f,t){
+  const p=G.turn,c=gen(G,p,opts()).filter(m=>m.f===f&&m.t===t);if(!c.length)return;
+  if(c[0].r==null)return commit(c[0]);
+  const b=G.b.slice();if(f!=null)b[f]=null;b[t]=p;
+  G.pb=b;G.pend={f,t};G.mode='remove';G.rem=c.map(m=>m.r);G.sel=null;G.tgt=[];G.last=t;sfx('mill');fx();render()}
+function click(i,rem){
+  if(!G||G.over||G.wait||isAI(G.turn))return;
+  if(G.cfg.online&&(rem?G.turn!==1:G.turn!==0))return;const p=G.turn;
+  if(G.mode==='remove'){if(G.rem.includes(i))commit({f:G.pend.f,t:G.pend.t,r:i});return}
+  if(G.mode==='place'){if(G.b[i]==null)humanAct(null,i);return}
+  if(G.sel!=null&&G.tgt.includes(i))return humanAct(G.sel,i);
+  if(G.b[i]===p){
+    if(G.frozen[i]){toast('❄️','ఈ కాయ ఘనీభవించింది','This piece is frozen');return}
+    G.sel=i;G.tgt=[...new Set(gen(G,p,opts()).filter(m=>m.f===i).map(m=>m.t))];render()}
+  else{G.sel=null;G.tgt=[];render()}}
+function win(w){G.over=true;G.winner=w;if(w!=null){sfx('win');fx(80)}render();endUI(w)}
+function endUI(w){
+  if(w!=null&&(!G.cfg.online||w===net.me)){try{const d=JSON.parse(localStorage.daadi||'{}');d[nm(w)]=(d[nm(w)]||0)+1;localStorage.daadi=JSON.stringify(d)}catch(e){}}
+  $('#endT').innerHTML=w==null?H('🤝 డ్రా!','Draw'):H('🏆 '+nm(w)+' గెలిచారు!',nm(w)+' wins!');
+  setTimeout(()=>{if(G&&G.over)$('#end').classList.add('on')},900)}
+/* ---------- online (PeerJS) ---------- */
+let WL;async function wake(){try{WL=await navigator.wakeLock.request('screen')}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&G&&G.cfg&&G.cfg.online)wake()});
+const CH='ABCDEFGHJKMNPQRSTUVWXYZ23456789',ICE={config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},
+  {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}]}};
+function showWait(t,code,sub,share){$('#wT').innerHTML=t;$('#wCode').textContent=code||'';$('#wS').innerHTML=sub||'';$('#wShare').classList.toggle('hide',!share);$('#wait').classList.add('on')}
+function netReset(){const c=net.conn,p=net.peer;net.role=null;net.conn=net.peer=null;net.q=[];try{c&&c.close()}catch(e){}try{p&&p.destroy()}catch(e){}}
+function demo(){G={b:Array(24).fill(null),tp:[9,9],turn:0,shield:{},frozen:{},cfg:{},names:['ఆటగాడు 1','ఆటగాడు 2'],tgt:[],rem:[],mode:'place',wait:true};render()}
+const noLib=()=>typeof Peer==='undefined'&&(showWait('⚠️ ఇంటర్నెట్ కావాలి','',H('ఆన్‌లైన్ లైబ్రరీ లోడ్ కాలేదు','Could not load the online library. Check your internet and reload the page.'),0),true);
+function createRoom(tries=0){
+  if(noLib())return;netReset();net.role='host';net.me=0;
+  const code=Array.from({length:4},()=>CH[Math.random()*CH.length|0]).join(''),p=net.peer=new Peer('daadi-'+code,ICE);net.code=code;
+  p.on('open',()=>showWait(H('🏠 మీ గది కోడ్','Your room code'),code,H('ఈ కోడ్‌తో స్నేహితుడు చేరాలి. ఎదురుచూస్తోంది…','Ask your friend to join with this code. Waiting…'),1));
+  p.on('error',e=>{if(e.type==='unavailable-id'&&tries<5)return createRoom(tries+1);showWait('⚠️','','Connection error: '+e.type,0)});
+  p.on('connection',c=>{if(net.conn&&net.conn.open){c.on('open',()=>{c.send({t:'full'});setTimeout(()=>c.close(),300)});return}net.conn=c;wire(c)})}
+function joinRoom(){
+  const code=$('#code').value.trim().toUpperCase();if(code.length!==4){$('#code').focus();return}
+  if(noLib())return;netReset();net.role='guest';net.me=1;
+  showWait(H('🔌 కనెక్ట్ అవుతోంది…','Connecting…'),code,'',0);
+  const p=net.peer=new Peer(ICE),fail=m=>{if(net.peer===p){showWait('⚠️','',m,0);netReset()}};
+  const to=setTimeout(()=>{if(!(net.conn&&net.conn.open))fail(H('కనెక్ట్ కాలేదు','Could not connect. Check the code or try another network.'))},15000);
+  p.on('open',()=>{const c=net.conn=p.connect('daadi-'+code,{reliable:true});wire(c);
+    c.on('open',()=>{clearTimeout(to);wake();c.send({t:'hello',name:$('#n1').value.trim()||'ఆటగాడు'});showWait(H('✅ కనెక్ట్ అయింది','Connected'),code,H('ఆట మొదలవుతోంది…','Starting the game…'),0)})});
+  p.on('error',e=>{clearTimeout(to);fail(e.type==='peer-unavailable'?H('గది కనపడలేదు','Room not found. Check the code.'):'Error: '+e.type)})}
+function wire(c){c.on('data',onData);c.on('close',()=>{if(net.conn===c)lost()});c.on('error',()=>{if(net.conn===c)lost()})}
+function onData(d){
+  if(!d)return;
+  if(net.role==='host'){
+    if(d.t==='hello'){const n1=$('#n1').value.trim()||'ఆటగాడు 1';let n2=String(d.name||'ఆటగాడు 2').slice(0,14);if(n2===n1)n2+=' 2';
+      const c={ai:0,lvl:2,n1,n2,first:+$('#first').value,fly:$('#fly').checked,surp:$('#surp').checked,online:true};G_last=c;newGame(c)}
+    else if(d.t==='click'&&G&&G.cfg.online)click(+d.i,true);
+    else if(d.t==='again'&&G_last&&G&&G.over)newGame(G_last)}
+  else if(d.t==='snap')onSnap(d);
+  else if(d.t==='full'){showWait('⚠️','',H('గది నిండిపోయింది','This room already has two players.'),0);netReset()}}
+const snap=()=>{const{b,tp,turn,mode,sel,tgt,rem,shield,frozen,ply,last,over,winner,pb,pend,wait,names,cfg}=G;return{b,tp,turn,mode,sel,tgt,rem,shield,frozen,ply,last,over,winner:winner==null?null:winner,pb,pend,wait,names,cfg}};
+function sync(){if(net.role!=='host'||!net.conn||!net.conn.open||!G||!G.cfg.online)return;net.conn.send({t:'snap',s:snap(),q:net.q});net.q=[]}
+function onSnap(d){
+  const was=G&&G.over&&G.cfg.online;G=d.s;G.hint=null;G.cfg.online=true;
+  ['setup','wait'].forEach(i=>$('#'+i).classList.remove('on'));
+  (d.q||[]).forEach(([k,...a])=>({toast,sfx,fx})[k](...a));render();
+  if(G.over){if(!was)endUI(G.winner)}else{$('#end').classList.remove('on');$('#again').classList.remove('hide')}}
+function lost(){
+  if(!G||!G.cfg.online){net.conn=null;return}
+  if(!G.over){G.over=true;G.winner=null;render();$('#endT').innerHTML=H('🔌 కనెక్షన్ తెగిపోయింది','Your friend disconnected')}
+  $('#again').classList.add('hide');$('#end').classList.add('on')}
+/* ---------- render ---------- */
+function render(){
+  if(!G)return;const b=G.pb||G.b,p=G.turn;let h='';
+  const ring=(c,i,x,y,r)=>`<circle class="${c}" cx="${x}" cy="${y}" r="${r}"/>`;
+  PTS.forEach(([x,y],i)=>{
+    h+=ring('pt',i,x,y,1.4);
+    if(b[i]!=null){
+      h+=`<circle class="pc k${b[i]}${i===G.last?' pop':''}${G.sel===i?' sel':''}${inMill(b,i)?' ml':''}" cx="${x}" cy="${y}" r="4.7"/>`;
+      if(G.shield[i])h+=ring('sh',i,x,y,6.2);
+      if(G.frozen[i])h+=ring('fz',i,x,y,4.7)+`<text x="${x}" y="${y+2}" font-size="5.5" text-anchor="middle">❄</text>`}
+    if(G.tgt.includes(i))h+=ring('tg',i,x,y,5);
+    if(G.mode==='remove'&&G.rem.includes(i)&&!G.over)h+=ring('rm',i,x,y,6);
+    if(G.hint&&(G.hint.t===i||G.hint.f===i||G.hint.r===i))h+=ring('hn',i,x,y,6.8)});
+  PTS.forEach(([x,y],i)=>h+=`<circle class="ht" data-i="${i}" cx="${x}" cy="${y}" r="7"/>`);
+  $('#lay').innerHTML=h;
+  [0,1].forEach(q=>{const on=G.b.filter(x=>x===q).length;
+    $('#p'+q).className='pl'+(!G.over&&p===q?' act':'');
+    $('#p'+q).innerHTML=`<div class="n"><span class="sw c${q}"></span>${nm(q)}${G.cfg.ai&&q===1?' 🤖':''}${G.cfg.online&&q===net.me?' (మీరు)':''}</div><div class="sm">ఉంచాల్సినవి ${G.tp[q]} · బోర్డుపై ${on}<br>To place ${G.tp[q]} · On board ${on}</div><div class="dots">${'<i class="c'+q+'"></i>'.repeat(G.tp[q])}</div>`});
+  let m;const n=nm(p),fl=G.cfg.fly&&!G.tp[p]&&G.b.filter(x=>x===p).length===3;
+  if(G.over)m=G.winner==null?H('🤝 డ్రా!','Draw'):H('🏆 '+nm(G.winner)+' గెలిచారు!','Game over');
+  else if(isAI(p)&&G.mode!=='remove')m=H('🤖 కంప్యూటర్ ఆలోచిస్తోంది…','Computer is thinking…');
+  else if(G.mode==='remove')m=H('🔥 దాడి! '+n+', ప్రత్యర్థి కాయను తీయండి','Daadi! Tap a glowing red piece to remove it');
+  else if(G.mode==='place')m=H(n+': కాయను ఉంచండి','Place a piece on any empty point ('+G.tp[p]+' left)');
+  else m=H(n+': కాయను కదపండి'+(fl?' 🕊️ ఎగరవచ్చు!':''),fl?'You may fly to any empty point!':'Pick a piece, then a green point');
+  if(G.cfg.online&&!G.over&&p!==net.me)m=H('⏳ '+n+' వంతు…','Waiting for '+n+'…');
+  $('#msg').innerHTML=m;$('#bHint').classList.toggle('hide',!!G.cfg.online);sync()}
+/* ---------- UI wiring ---------- */
+$('#lay').addEventListener('click',e=>{const i=e.target.dataset.i;if(i==null)return;
+  if(net.role==='guest'){if(G&&G.cfg.online&&!G.over&&!G.wait&&G.turn===1&&net.conn&&net.conn.open)net.conn.send({t:'click',i:+i});return}
+  click(+i)});
+$('#modeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;const m=+b.dataset.m;CFG.ai=m===1?1:0;
+  [...$('#modeSeg').children].forEach(x=>x.classList.toggle('on',x===b));
+  $('#lvlSeg').classList.toggle('hide',m!==1);$('#onl').classList.toggle('hide',m!==2);$('#go').classList.toggle('hide',m===2);$('#n2').classList.toggle('hide',m===2);
+  $('#n2').value=m===1?'కంప్యూటర్':'ఆటగాడు 2'};
+$('#lvlSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;CFG.lvl=+b.dataset.l;[...$('#lvlSeg').children].forEach(x=>x.classList.toggle('on',x===b))};
+function lb(){let d={};try{d=JSON.parse(localStorage.daadi||'{}')}catch(e){}
+  const r=Object.entries(d).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  $('#lb').innerHTML=r.length?'<tr><td colspan=2 class="sm">🏆 విజయాలు / Wins</td></tr>'+r.map(([k,v])=>`<tr><td>${k.replace(/[<&]/g,'')}</td><td>${v}</td></tr>`).join(''):''}
+$('#go').onclick=()=>{const c={ai:CFG.ai,lvl:CFG.lvl,n1:$('#n1').value.trim()||'ఆటగాడు 1',n2:$('#n2').value.trim()||'ఆటగాడు 2',
+  first:+$('#first').value,fly:$('#fly').checked,surp:$('#surp').checked};G_last=c;newGame(c)};
+let G_last;
+$('#again').onclick=()=>{if(net.role==='guest'){if(net.conn&&net.conn.open)net.conn.send({t:'again'})}else newGame(G_last)};
+$('#menu').onclick=()=>{netReset();demo();$('#end').classList.remove('on');lb();$('#setup').classList.add('on')};
+$('#bNew').onclick=()=>{if(G&&G.cfg.online&&!G.over&&!confirm('ఆన్‌లైన్ ఆట వదిలేస్తారా? / Leave the online game?'))return;netReset();demo();lb();$('#setup').classList.add('on')};
+$('#bCreate').onclick=()=>createRoom();$('#bJoin').onclick=joinRoom;
+$('#wCancel').onclick=()=>{netReset();demo();$('#wait').classList.remove('on')};
+$('#wShare').onclick=()=>{const u=location.origin+location.pathname+'?room='+net.code,t='దాడి ఆడదాం! Daadi room code: '+net.code;
+  if(navigator.share)navigator.share({title:'Daadi',text:t,url:u}).catch(()=>{});
+  else{try{navigator.clipboard.writeText(t+' '+u);toast('📋','లింక్ కాపీ అయింది','Invite link copied')}catch(e){}}};
+$('#bRules').onclick=()=>$('#rules').classList.add('on');
+$('#bSnd').onclick=()=>{mute=!mute;$('#bSnd').firstChild.textContent=mute?'🔇':'🔊'};
+$('#bHint').onclick=()=>{if(!G||G.over||G.wait||isAI(G.turn))return;
+  const m=G.mode==='remove'?{r:G.rem[Math.random()*G.rem.length|0]}:pick(G,G.turn,2,opts());
+  G.hint=m;render();setTimeout(()=>{if(G){G.hint=null;render()}},2500)};
+lb();demo();
+const rc=new URLSearchParams(location.search).get('room');
+if(rc){$('#modeSeg [data-m="2"]').click();$('#code').value=rc.slice(0,4).toUpperCase()}
+</script></body></html>
